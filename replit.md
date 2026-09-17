@@ -12,6 +12,7 @@ memberikan key melalui `/getkey` setelah status keanggotaan terverifikasi.
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
 - Required secrets: `TELEGRAM_BOT_TOKEN`, `GETKEY_VALUE`
+- Required env: `ADMIN_TELEGRAM_ID`
 
 ## Stack
 
@@ -25,6 +26,7 @@ memberikan key melalui `/getkey` setelah status keanggotaan terverifikasi.
 ## Where things live
 
 - `main.py` — Telegram bot, Force Subscribe checks, callbacks, and `/getkey`
+- `data/users.db` — SQLite database for unique users who ran `/start`
 - `README.md` — setup and operation notes
 
 ## Architecture decisions
@@ -46,6 +48,7 @@ The requested channel is `@yazz8ballpool`.
 
 - The bot must be an administrator in the channel for reliable membership checks.
 - `/getkey` requires the `GETKEY_VALUE` Secret to be configured before startup.
+- `/stats` requires the numeric `ADMIN_TELEGRAM_ID` environment variable.
 
 ## Pointers
 

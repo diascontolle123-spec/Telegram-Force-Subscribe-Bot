@@ -11,6 +11,8 @@ join channel `@yazz8ballpool`.
 - Menampilkan Reply Keyboard dengan Get Key, Order VIP, Link APK MOD, dan Tutorial
   setelah membership terverifikasi.
 - Menyediakan `/getkey`, `/ordervip`, `/apkninja`, `/linkapkmod`, dan `/tutorial`.
+- Menyimpan user ID unik yang menjalankan `/start` di SQLite.
+- Menyediakan `/stats` khusus untuk Telegram Admin ID yang dikonfigurasi.
 - Token bot tidak disimpan di source code.
 
 ## Konfigurasi
@@ -19,8 +21,10 @@ Atur dua environment variable berikut:
 
 - `TELEGRAM_BOT_TOKEN` — Secret yang sudah disediakan di workspace.
 - `GETKEY_VALUE` — key yang akan dikirim oleh `/getkey`.
+- `ADMIN_TELEGRAM_ID` — ID numerik Telegram admin yang boleh memakai `/stats`.
 - `VIP_PRICE_LIST` — daftar harga VIP yang dikirim oleh `/ordervip`, bisa berisi
   beberapa baris. Default-nya meminta pengguna menghubungi admin.
+- `USERS_DB_PATH` — lokasi database SQLite user, default `data/users.db`.
 
 Opsional:
 

@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import logging
 import os
+import sqlite3
 from dataclasses import dataclass
+from datetime import datetime, timezone
+from pathlib import Path
 
 from telegram import (
     InlineKeyboardButton,
@@ -35,6 +38,7 @@ MENU_TUTORIAL = "📖 Tutorial"
 APK_MOD_URL = "https://sub4unlock.com/S/05mxk"
 TUTORIAL_URL = "https://youtu.be/94COnGxw15A?si=gVm0Qjos7Cfk_3Ao"
 ADMIN_USERNAME = "@ADAMYOURBAE"
+USERS_DB_PATH = os.getenv("USERS_DB_PATH", "data/users.db")
 DEFAULT_VIP_PRICES = (
     "Daftar harga VIP belum diatur.\n"
     "Silakan hubungi admin untuk mendapatkan harga terbaru."
@@ -46,27 +50,76 @@ class Settings:
     bot_token: str
     key_value: str
     vip_price_list: str
+    admin_telegram_id: int
 
     @classmethod
     def from_environment(cls) -> "Settings":
         bot_token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
         key_value = os.getenv("GETKEY_VALUE", "").strip()
         vip_price_list = os.getenv("VIP_PRICE_LIST", DEFAULT_VIP_PRICES).strip()
+        admin_telegram_id_value = os.getenv("ADMIN_TELEGRAM_ID", "").strip()
 
         missing = []
         if not bot_token:
             missing.append("TELEGRAM_BOT_TOKEN")
         if not key_value:
             missing.append("GETKEY_VALUE")
+        if not admin_telegram_id_value:
+            missing.append("ADMIN_TELEGRAM_ID")
         if missing:
             names = ", ".join(missing)
             raise RuntimeError(f"Missing required environment variable(s): {names}")
+
+        try:
+            admin_telegram_id = int(admin_telegram_id_value)
+        except ValueError as error:
+            raise RuntimeError("ADMIN_TELEGRAM_ID must be a numeric Telegram user ID") from error
+        if admin_telegram_id <= 0:
+            raise RuntimeError("ADMIN_TELEGRAM_ID must be a positive Telegram user ID")
 
         return cls(
             bot_token=bot_token,
             key_value=key_value,
             vip_price_list=vip_price_list or DEFAULT_VIP_PRICES,
+            admin_telegram_id=admin_telegram_id,
         )
+
+
+class UserStore:
+    def __init__(self, database_path: str) -> None:
+        self.database_path = Path(database_path)
+        self.database_path.parent.mkdir(parents=True, exist_ok=True)
+        with self._connect() as connection:
+            connection.execute(
+                """
+                CREATE TABLE IF NOT EXISTS users (
+                    telegram_user_id INTEGER PRIMARY KEY,
+                    first_seen_at TEXT NOT NULL,
+                    last_seen_at TEXT NOT NULL
+                )
+                """
+            )
+
+    def _connect(self) -> sqlite3.Connection:
+        return sqlite3.connect(self.database_path)
+
+    def record_start(self, telegram_user_id: int) -> None:
+        timestamp = datetime.now(timezone.utc).isoformat()
+        with self._connect() as connection:
+            connection.execute(
+                """
+                INSERT INTO users (telegram_user_id, first_seen_at, last_seen_at)
+                VALUES (?, ?, ?)
+                ON CONFLICT(telegram_user_id) DO UPDATE SET
+                    last_seen_at = excluded.last_seen_at
+                """,
+                (telegram_user_id, timestamp, timestamp),
+            )
+
+    def count_users(self) -> int:
+        with self._connect() as connection:
+            result = connection.execute("SELECT COUNT(*) FROM users").fetchone()
+        return int(result[0]) if result is not None else 0
 
 
 def subscription_keyboard() -> InlineKeyboardMarkup:
@@ -146,6 +199,11 @@ async def send_subscription_prompt(update: Update) -> None:
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user = update.effective_user
+    if user is not None:
+        user_store: UserStore = context.application.bot_data["user_store"]
+        user_store.record_start(user.id)
+
     if not await is_subscribed(update, context):
         await send_subscription_prompt(update)
         return
@@ -239,6 +297,32 @@ async def help_command(
             "/tutorial — melihat petunjuk penggunaan",
             reply_markup=menu_keyboard(),
         )
+
+
+async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not await is_subscribed(update, context):
+        await send_subscription_prompt(update)
+        return
+
+    user = update.effective_user
+    settings: Settings = context.application.bot_data["settings"]
+    message = update.effective_message
+    if user is None or message is None:
+        return
+
+    if user.id != settings.admin_telegram_id:
+        await message.reply_text(
+            "Akses ditolak. Perintah ini hanya untuk admin.",
+            reply_markup=menu_keyboard(),
+        )
+        return
+
+    user_store: UserStore = context.application.bot_data["user_store"]
+    total_users = user_store.count_users()
+    await message.reply_text(
+        f"📊 STATISTIK BOT:\n• Total Pengguna: {total_users} user",
+        reply_markup=menu_keyboard(),
+    )
 
 
 async def check_status_callback(
@@ -350,6 +434,7 @@ async def post_init(application: Application) -> None:
             ("ordervip", "Lihat harga VIP dan kontak admin"),
             ("apkninja", "Dapatkan link APK MOD"),
             ("tutorial", "Lihat tutorial penggunaan"),
+            ("stats", "Statistik bot untuk admin"),
         ]
     )
     LOGGER.info("Telegram bot started; protected channel: %s", CHANNEL_USERNAME)
@@ -369,6 +454,7 @@ def build_application(settings: Settings) -> Application:
         .build()
     )
     application.bot_data["settings"] = settings
+    application.bot_data["user_store"] = UserStore(USERS_DB_PATH)
 
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("getkey", get_key))
@@ -376,6 +462,7 @@ def build_application(settings: Settings) -> Application:
     application.add_handler(CommandHandler(["apkninja", "linkapkmod"], apk_ninja))
     application.add_handler(CommandHandler("tutorial", tutorial))
     application.add_handler(CommandHandler("help", help_command))
+    application.add_handler(CommandHandler("stats", stats))
     application.add_handler(
         CallbackQueryHandler(
             check_status_callback,
