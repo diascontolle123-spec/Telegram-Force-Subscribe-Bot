@@ -26,7 +26,7 @@ memberikan key melalui `/getkey` setelah status keanggotaan terverifikasi.
 ## Where things live
 
 - `main.py` — Telegram bot, Force Subscribe checks, callbacks, and `/getkey`
-- `data/users.db` — SQLite database for unique users who ran `/start`
+- `data/users.db` — SQLite database for users, stats, and per-user key expiry
 - `README.md` — setup and operation notes
 
 ## Architecture decisions
@@ -49,6 +49,7 @@ The requested channel is `@yazz8ballpool`.
 - The bot must be an administrator in the channel for reliable membership checks.
 - `/getkey` requires the `GETKEY_VALUE` Secret to be configured before startup.
 - `/stats` requires the numeric `ADMIN_TELEGRAM_ID` environment variable.
+- Key expiry is stored per Telegram user and is renewed only after 24 hours have elapsed.
 
 ## Pointers
 

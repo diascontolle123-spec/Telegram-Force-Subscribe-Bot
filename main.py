@@ -4,8 +4,9 @@ import logging
 import os
 import sqlite3
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 from telegram import (
     InlineKeyboardButton,
@@ -39,6 +40,22 @@ APK_MOD_URL = "https://sub4unlock.com/S/05mxk"
 TUTORIAL_URL = "https://youtu.be/94COnGxw15A?si=gVm0Qjos7Cfk_3Ao"
 ADMIN_USERNAME = "@ADAMYOURBAE"
 USERS_DB_PATH = os.getenv("USERS_DB_PATH", "data/users.db")
+DISPLAY_TIMEZONE = os.getenv("BOT_TIMEZONE", "Asia/Jakarta")
+KEY_VALIDITY = timedelta(hours=24)
+MONTH_NAMES_ID = (
+    "JANUARI",
+    "FEBRUARI",
+    "MARET",
+    "APRIL",
+    "MEI",
+    "JUNI",
+    "JULI",
+    "AGUSTUS",
+    "SEPTEMBER",
+    "OKTOBER",
+    "NOVEMBER",
+    "DESEMBER",
+)
 DEFAULT_VIP_PRICES = (
     "Daftar harga VIP belum diatur.\n"
     "Silakan hubungi admin untuk mendapatkan harga terbaru."
@@ -99,6 +116,15 @@ class UserStore:
                 )
                 """
             )
+            connection.execute(
+                """
+                CREATE TABLE IF NOT EXISTS key_access (
+                    telegram_user_id INTEGER PRIMARY KEY,
+                    issued_at TEXT NOT NULL,
+                    expires_at TEXT NOT NULL
+                )
+                """
+            )
 
     def _connect(self) -> sqlite3.Connection:
         return sqlite3.connect(self.database_path)
@@ -120,6 +146,50 @@ class UserStore:
         with self._connect() as connection:
             result = connection.execute("SELECT COUNT(*) FROM users").fetchone()
         return int(result[0]) if result is not None else 0
+
+    def issue_key_window(
+        self,
+        telegram_user_id: int,
+        now: datetime | None = None,
+    ) -> datetime:
+        current_time = now or datetime.now(timezone.utc)
+        if current_time.tzinfo is None:
+            current_time = current_time.replace(tzinfo=timezone.utc)
+        current_time = current_time.astimezone(timezone.utc)
+
+        with self._connect() as connection:
+            row = connection.execute(
+                """
+                SELECT expires_at
+                FROM key_access
+                WHERE telegram_user_id = ?
+                """,
+                (telegram_user_id,),
+            ).fetchone()
+
+            if row is not None:
+                existing_expiry = datetime.fromisoformat(row[0]).astimezone(
+                    timezone.utc
+                )
+                if existing_expiry > current_time:
+                    return existing_expiry
+
+            new_expiry = current_time + KEY_VALIDITY
+            connection.execute(
+                """
+                INSERT INTO key_access (telegram_user_id, issued_at, expires_at)
+                VALUES (?, ?, ?)
+                ON CONFLICT(telegram_user_id) DO UPDATE SET
+                    issued_at = excluded.issued_at,
+                    expires_at = excluded.expires_at
+                """,
+                (
+                    telegram_user_id,
+                    current_time.isoformat(),
+                    new_expiry.isoformat(),
+                ),
+            )
+            return new_expiry
 
 
 def subscription_keyboard() -> InlineKeyboardMarkup:
@@ -153,6 +223,21 @@ def subscription_message() -> str:
     return (
         "AKSES TERKUNCI\n\n"
         f"Silakan join {CHANNEL_USERNAME}, lalu tekan tombol *Cek Status*."
+    )
+
+
+def format_expiry(expiry: datetime) -> str:
+    local_expiry = expiry.astimezone(ZoneInfo(DISPLAY_TIMEZONE))
+    month = MONTH_NAMES_ID[local_expiry.month - 1]
+    return f"{local_expiry.day} {month} {local_expiry:%H.%M}"
+
+
+def key_message(key_value: str, expiry: datetime) -> str:
+    return (
+        "🔑 KEY ANDA:\n"
+        f"Key: {key_value}\n"
+        "Status: Aktif\n"
+        f"Expir: {format_expiry(expiry)}"
     )
 
 
@@ -218,10 +303,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def send_key(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     settings: Settings = context.application.bot_data["settings"]
+    user = update.effective_user
     message = update.effective_message
-    if message is not None:
+    if user is not None and message is not None:
+        user_store: UserStore = context.application.bot_data["user_store"]
+        expiry = user_store.issue_key_window(user.id)
         await message.reply_text(
-            f"Key kamu:\n\n{settings.key_value}",
+            key_message(settings.key_value, expiry),
             reply_markup=menu_keyboard(),
         )
 
@@ -378,7 +466,13 @@ async def get_key_callback(
         return
 
     settings: Settings = context.application.bot_data["settings"]
-    await query.edit_message_text(f"Key kamu:\n\n{settings.key_value}")
+    user = update.effective_user
+    if user is None:
+        return
+
+    user_store: UserStore = context.application.bot_data["user_store"]
+    expiry = user_store.issue_key_window(user.id)
+    await query.edit_message_text(key_message(settings.key_value, expiry))
     if query.message is not None:
         await query.message.reply_text(
             "Pilih menu di bawah.",

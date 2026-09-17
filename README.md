@@ -13,6 +13,8 @@ join channel `@yazz8ballpool`.
 - Menyediakan `/getkey`, `/ordervip`, `/apkninja`, `/linkapkmod`, dan `/tutorial`.
 - Menyimpan user ID unik yang menjalankan `/start` di SQLite.
 - Menyediakan `/stats` khusus untuk Telegram Admin ID yang dikonfigurasi.
+- Memberikan masa aktif key 24 jam per user sejak pertama kali `/getkey`
+  berhasil digunakan, lalu memperbarui expiry setelah masa aktif habis.
 - Token bot tidak disimpan di source code.
 
 ## Konfigurasi
@@ -25,6 +27,7 @@ Atur dua environment variable berikut:
 - `VIP_PRICE_LIST` — daftar harga VIP yang dikirim oleh `/ordervip`, bisa berisi
   beberapa baris. Default-nya meminta pengguna menghubungi admin.
 - `USERS_DB_PATH` — lokasi database SQLite user, default `data/users.db`.
+- `BOT_TIMEZONE` — timezone untuk menampilkan expiry, default `Asia/Jakarta`.
 
 Opsional:
 
