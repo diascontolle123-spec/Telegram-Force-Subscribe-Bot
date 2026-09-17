@@ -234,10 +234,10 @@ def format_expiry(expiry: datetime) -> str:
 
 def key_message(key_value: str, expiry: datetime) -> str:
     return (
-        "🔑 KEY ANDA:\n"
-        f"Key: {key_value}\n"
-        "Status: Aktif\n"
-        f"Expir: {format_expiry(expiry)}"
+        "🔑 KEY ANDA BERHASIL DIDAPATKAN!\n\n"
+        f"• Key: {key_value}\n"
+        "• Status: Aktif\n"
+        f"• Expired: [{format_expiry(expiry)}]"
     )
 
 
