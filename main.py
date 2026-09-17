@@ -4,7 +4,13 @@ import logging
 import os
 from dataclasses import dataclass
 
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    ReplyKeyboardMarkup,
+    ReplyKeyboardRemove,
+    Update,
+)
 from telegram.constants import ParseMode
 from telegram.error import TelegramError
 from telegram.ext import (
@@ -22,17 +28,30 @@ CHANNEL_USERNAME = os.getenv("CHANNEL_USERNAME", "@yazz8ballpool")
 CHANNEL_URL = os.getenv("CHANNEL_URL", "https://t.me/yazz8ballpool")
 CHECK_STATUS_CALLBACK = "check_subscription"
 GET_KEY_CALLBACK = "get_key"
+MENU_GET_KEY = "🔑 Get Key"
+MENU_ORDER_VIP = "🛒 Order VIP"
+MENU_APK = "📥 Link APK MOD"
+MENU_TUTORIAL = "📖 Tutorial"
+APK_MOD_URL = "https://sub4unlock.com/S/05mxk"
+TUTORIAL_URL = "https://youtu.be/94COnGxw15A?si=gVm0Qjos7Cfk_3Ao"
+ADMIN_USERNAME = "@ADAMYOURBAE"
+DEFAULT_VIP_PRICES = (
+    "Daftar harga VIP belum diatur.\n"
+    "Silakan hubungi admin untuk mendapatkan harga terbaru."
+)
 
 
 @dataclass(frozen=True)
 class Settings:
     bot_token: str
     key_value: str
+    vip_price_list: str
 
     @classmethod
     def from_environment(cls) -> "Settings":
         bot_token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
         key_value = os.getenv("GETKEY_VALUE", "").strip()
+        vip_price_list = os.getenv("VIP_PRICE_LIST", DEFAULT_VIP_PRICES).strip()
 
         missing = []
         if not bot_token:
@@ -43,7 +62,11 @@ class Settings:
             names = ", ".join(missing)
             raise RuntimeError(f"Missing required environment variable(s): {names}")
 
-        return cls(bot_token=bot_token, key_value=key_value)
+        return cls(
+            bot_token=bot_token,
+            key_value=key_value,
+            vip_price_list=vip_price_list or DEFAULT_VIP_PRICES,
+        )
 
 
 def subscription_keyboard() -> InlineKeyboardMarkup:
@@ -61,9 +84,21 @@ def get_key_keyboard() -> InlineKeyboardMarkup:
     )
 
 
+def menu_keyboard() -> ReplyKeyboardMarkup:
+    return ReplyKeyboardMarkup(
+        [
+            [MENU_GET_KEY, MENU_ORDER_VIP],
+            [MENU_APK, MENU_TUTORIAL],
+        ],
+        resize_keyboard=True,
+        is_persistent=True,
+        input_field_placeholder="Pilih menu",
+    )
+
+
 def subscription_message() -> str:
     return (
-        "Akses bot masih terkunci.\n\n"
+        "AKSES TERKUNCI\n\n"
         f"Silakan join {CHANNEL_USERNAME}, lalu tekan tombol *Cek Status*."
     )
 
@@ -97,6 +132,12 @@ async def is_subscribed(
 async def send_subscription_prompt(update: Update) -> None:
     message = update.effective_message
     if message is not None:
+        # Remove a previously displayed menu if a user leaves the channel
+        # after gaining access.
+        await message.reply_text(
+            "Menu dinonaktifkan sampai kamu join channel.",
+            reply_markup=ReplyKeyboardRemove(),
+        )
         await message.reply_text(
             subscription_message(),
             parse_mode=ParseMode.MARKDOWN,
@@ -112,8 +153,18 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     message = update.effective_message
     if message is not None:
         await message.reply_text(
-            "Akses berhasil dibuka.\n\nGunakan /getkey untuk mengambil key.",
-            reply_markup=get_key_keyboard(),
+            "Akses berhasil dibuka. Pilih menu di bawah.",
+            reply_markup=menu_keyboard(),
+        )
+
+
+async def send_key(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    settings: Settings = context.application.bot_data["settings"]
+    message = update.effective_message
+    if message is not None:
+        await message.reply_text(
+            f"Key kamu:\n\n{settings.key_value}",
+            reply_markup=menu_keyboard(),
         )
 
 
@@ -122,10 +173,53 @@ async def get_key(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await send_subscription_prompt(update)
         return
 
+    await send_key(update, context)
+
+
+async def order_vip(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not await is_subscribed(update, context):
+        await send_subscription_prompt(update)
+        return
+
     settings: Settings = context.application.bot_data["settings"]
     message = update.effective_message
     if message is not None:
-        await message.reply_text(f"Key kamu:\n\n{settings.key_value}")
+        await message.reply_text(
+            "Daftar Harga VIP\n\n"
+            f"{settings.vip_price_list}\n\n"
+            f"Admin: {ADMIN_USERNAME}",
+            reply_markup=menu_keyboard(),
+        )
+
+
+async def apk_ninja(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not await is_subscribed(update, context):
+        await send_subscription_prompt(update)
+        return
+
+    message = update.effective_message
+    if message is not None:
+        await message.reply_text(
+            f"Link Download APK MOD:\n{APK_MOD_URL}",
+            reply_markup=menu_keyboard(),
+        )
+
+
+async def tutorial(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not await is_subscribed(update, context):
+        await send_subscription_prompt(update)
+        return
+
+    message = update.effective_message
+    if message is not None:
+        await message.reply_text(
+            "Tutorial penggunaan:\n\n"
+            "1. Pastikan sudah join channel.\n"
+            "2. Gunakan menu di bawah sesuai kebutuhan.\n"
+            "3. Tekan Get Key untuk mengambil key.\n\n"
+            f"Video tutorial: {TUTORIAL_URL}",
+            reply_markup=menu_keyboard(),
+        )
 
 
 async def help_command(
@@ -138,7 +232,12 @@ async def help_command(
     message = update.effective_message
     if message is not None:
         await message.reply_text(
-            "Perintah yang tersedia:\n/getkey — mengambil key"
+            "Perintah yang tersedia:\n"
+            "/getkey — mengambil key\n"
+            "/ordervip — melihat harga VIP dan kontak admin\n"
+            "/apkninja — mendapatkan link APK MOD\n"
+            "/tutorial — melihat petunjuk penggunaan",
+            reply_markup=menu_keyboard(),
         )
 
 
@@ -153,15 +252,24 @@ async def check_status_callback(
     if await is_subscribed(update, context):
         await query.edit_message_text(
             "Status terverifikasi. Kamu sudah join channel.\n\n"
-            "Tekan tombol di bawah atau gunakan /getkey.",
-            reply_markup=get_key_keyboard(),
+            "Menu akses sudah diaktifkan.",
         )
+        if query.message is not None:
+            await query.message.reply_text(
+                "Pilih menu di bawah.",
+                reply_markup=menu_keyboard(),
+            )
     else:
         await query.edit_message_text(
             subscription_message(),
             parse_mode=ParseMode.MARKDOWN,
             reply_markup=subscription_keyboard(),
         )
+        if query.message is not None:
+            await query.message.reply_text(
+                "Menu dinonaktifkan sampai kamu join channel.",
+                reply_markup=ReplyKeyboardRemove(),
+            )
 
 
 async def get_key_callback(
@@ -178,10 +286,20 @@ async def get_key_callback(
             parse_mode=ParseMode.MARKDOWN,
             reply_markup=subscription_keyboard(),
         )
+        if query.message is not None:
+            await query.message.reply_text(
+                "Menu dinonaktifkan sampai kamu join channel.",
+                reply_markup=ReplyKeyboardRemove(),
+            )
         return
 
     settings: Settings = context.application.bot_data["settings"]
     await query.edit_message_text(f"Key kamu:\n\n{settings.key_value}")
+    if query.message is not None:
+        await query.message.reply_text(
+            "Pilih menu di bawah.",
+            reply_markup=menu_keyboard(),
+        )
 
 
 async def locked_command(
@@ -206,7 +324,22 @@ async def plain_text(
 
     message = update.effective_message
     if message is not None:
-        await message.reply_text("Gunakan /getkey untuk mengambil key.")
+        action = message.text or ""
+        handlers = {
+            MENU_GET_KEY: send_key,
+            MENU_ORDER_VIP: order_vip,
+            MENU_APK: apk_ninja,
+            MENU_TUTORIAL: tutorial,
+        }
+        handler = handlers.get(action)
+        if handler is not None:
+            await handler(update, context)
+            return
+
+        await message.reply_text(
+            "Pilih salah satu tombol menu di bawah.",
+            reply_markup=menu_keyboard(),
+        )
 
 
 async def post_init(application: Application) -> None:
@@ -214,7 +347,9 @@ async def post_init(application: Application) -> None:
         [
             ("start", "Mulai dan cek akses"),
             ("getkey", "Ambil key setelah join channel"),
-            ("help", "Lihat bantuan"),
+            ("ordervip", "Lihat harga VIP dan kontak admin"),
+            ("apkninja", "Dapatkan link APK MOD"),
+            ("tutorial", "Lihat tutorial penggunaan"),
         ]
     )
     LOGGER.info("Telegram bot started; protected channel: %s", CHANNEL_USERNAME)
@@ -237,6 +372,9 @@ def build_application(settings: Settings) -> Application:
 
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("getkey", get_key))
+    application.add_handler(CommandHandler("ordervip", order_vip))
+    application.add_handler(CommandHandler(["apkninja", "linkapkmod"], apk_ninja))
+    application.add_handler(CommandHandler("tutorial", tutorial))
     application.add_handler(CommandHandler("help", help_command))
     application.add_handler(
         CallbackQueryHandler(
