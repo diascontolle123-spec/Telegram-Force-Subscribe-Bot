@@ -33,6 +33,7 @@ CHANNEL_URL = os.getenv("CHANNEL_URL", "https://t.me/yazz8ballpool")
 CHECK_STATUS_CALLBACK = "check_subscription"
 GET_KEY_CALLBACK = "get_key"
 MENU_GET_KEY = "🔑 Get Key"
+MENU_LIST_HARGA = "📊 List Harga"
 MENU_ORDER_VIP = "🛒 Order VIP"
 MENU_APK = "📥 Link APK MOD"
 MENU_TUTORIAL = "📖 Tutorial"
@@ -61,6 +62,22 @@ DEFAULT_VIP_PRICES = (
     "Daftar harga VIP belum diatur.\n"
     "Silakan hubungi admin untuk mendapatkan harga terbaru."
 )
+LIST_HARGA_MESSAGE = """📊 DAFTAR HARGA MOD & VIP ENGINE
+
+NINJA ENGGINE :
+• 7 Day: 40K - $2.60
+• 15 Day: 70K - $4.50
+• 30 Day: 110K - $7.10
+• Permanent: Contacts Admin
+
+SAMURAI ENGGINE :
+• 7 Day: 45K - $2.90
+• 15 Day: 80K - $5.20
+• 30 Day: 115K - $7.40
+• Permanent: Contacts Admin
+
+💳 Pembayaran: BINANCE / PAYPAL / DANA / QRIS / MANDIRI
+💬 Pembelian & Pertanyaan: @ADAMYOURBAE"""
 
 
 @dataclass(frozen=True)
@@ -211,8 +228,9 @@ def get_key_keyboard() -> InlineKeyboardMarkup:
 def menu_keyboard() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         [
-            [MENU_GET_KEY, MENU_ORDER_VIP],
-            [MENU_APK, MENU_TUTORIAL],
+            [MENU_GET_KEY, MENU_LIST_HARGA],
+            [MENU_ORDER_VIP, MENU_APK],
+            [MENU_TUTORIAL],
         ],
         resize_keyboard=True,
         is_persistent=True,
@@ -339,6 +357,19 @@ async def order_vip(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
 
 
+async def list_harga(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not await is_subscribed(update, context):
+        await send_subscription_prompt(update)
+        return
+
+    message = update.effective_message
+    if message is not None:
+        await message.reply_text(
+            LIST_HARGA_MESSAGE,
+            reply_markup=menu_keyboard(),
+        )
+
+
 async def apk_ninja(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not await is_subscribed(update, context):
         await send_subscription_prompt(update)
@@ -381,6 +412,7 @@ async def help_command(
         await message.reply_text(
             "Perintah yang tersedia:\n"
             "/getkey — mengambil key\n"
+            "/listharga — melihat daftar harga MOD & VIP Engine\n"
             "/ordervip — melihat harga VIP dan kontak admin\n"
             "/apkninja — mendapatkan link APK MOD\n"
             "/tutorial — melihat petunjuk penggunaan",
@@ -506,6 +538,7 @@ async def plain_text(
         action = message.text or ""
         handlers = {
             MENU_GET_KEY: send_key,
+            MENU_LIST_HARGA: list_harga,
             MENU_ORDER_VIP: order_vip,
             MENU_APK: apk_ninja,
             MENU_TUTORIAL: tutorial,
@@ -526,6 +559,7 @@ async def post_init(application: Application) -> None:
         [
             ("start", "Mulai dan cek akses"),
             ("getkey", "Ambil key setelah join channel"),
+            ("listharga", "Lihat daftar harga MOD dan VIP"),
             ("ordervip", "Lihat harga VIP dan kontak admin"),
             ("apkninja", "Dapatkan link APK MOD"),
             ("tutorial", "Lihat tutorial penggunaan"),
@@ -553,6 +587,7 @@ def build_application(settings: Settings) -> Application:
 
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("getkey", get_key))
+    application.add_handler(CommandHandler("listharga", list_harga))
     application.add_handler(CommandHandler("ordervip", order_vip))
     application.add_handler(CommandHandler(["apkninja", "linkapkmod"], apk_ninja))
     application.add_handler(CommandHandler("tutorial", tutorial))

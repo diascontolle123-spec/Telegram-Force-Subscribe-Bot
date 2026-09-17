@@ -10,7 +10,8 @@ join channel `@yazz8ballpool`.
 - Mengunci semua perintah dan tombol menu sebelum join.
 - Menampilkan Reply Keyboard dengan Get Key, Order VIP, Link APK MOD, dan Tutorial
   setelah membership terverifikasi.
-- Menyediakan `/getkey`, `/ordervip`, `/apkninja`, `/linkapkmod`, dan `/tutorial`.
+- Menyediakan `/getkey`, `/listharga`, `/ordervip`, `/apkninja`,
+  `/linkapkmod`, dan `/tutorial`.
 - Menyimpan user ID unik yang menjalankan `/start` di SQLite.
 - Menyediakan `/stats` khusus untuk Telegram Admin ID yang dikonfigurasi.
 - Memberikan masa aktif key 24 jam per user sejak pertama kali `/getkey`
