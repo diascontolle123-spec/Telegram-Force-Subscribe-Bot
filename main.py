@@ -42,7 +42,7 @@ TUTORIAL_URL = "https://youtu.be/94COnGxw15A?si=gVm0Qjos7Cfk_3Ao"
 ADMIN_USERNAME = "@ADAMYOURBAE"
 USERS_DB_PATH = os.getenv("USERS_DB_PATH", "data/users.db")
 DISPLAY_TIMEZONE = os.getenv("BOT_TIMEZONE", "Asia/Jakarta")
-MANUAL_EXPIRY_TEXT = "18 SEPTEMBER 16.37"
+MANUAL_EXPIRY_TEXT = "19 September 02:55"
 KEY_VALIDITY = timedelta(hours=24)
 MONTH_NAMES_ID = (
     "JANUARI",
