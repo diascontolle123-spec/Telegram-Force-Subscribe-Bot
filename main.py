@@ -125,7 +125,7 @@ async def get_key(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     settings: Settings = context.application.bot_data["settings"]
     message = update.effective_message
     if message is not None:
-        await message.reply_text(f"Key kamu:\n\n`{settings.key_value}`")
+        await message.reply_text(f"Key kamu:\n\n{settings.key_value}")
 
 
 async def help_command(
@@ -181,7 +181,7 @@ async def get_key_callback(
         return
 
     settings: Settings = context.application.bot_data["settings"]
-    await query.edit_message_text(f"Key kamu:\n\n`{settings.key_value}`")
+    await query.edit_message_text(f"Key kamu:\n\n{settings.key_value}")
 
 
 async def locked_command(

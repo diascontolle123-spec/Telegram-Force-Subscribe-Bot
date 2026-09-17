@@ -1,15 +1,17 @@
-# [Project name]
+# Telegram Force Subscribe Bot
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+Bot Telegram Python yang mengunci akses sampai pengguna join channel dan
+memberikan key melalui `/getkey` setelah status keanggotaan terverifikasi.
 
 ## Run & Operate
 
 - `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `python main.py` — run the Telegram bot
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- Required secrets: `TELEGRAM_BOT_TOKEN`, `GETKEY_VALUE`
 
 ## Stack
 
@@ -22,23 +24,28 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `main.py` — Telegram bot, Force Subscribe checks, callbacks, and `/getkey`
+- `README.md` — setup and operation notes
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Telegram membership is checked live with `getChatMember` before every protected action.
+- The bot uses polling so it runs as a long-lived console workflow without a public webhook.
+- Bot token and returned key are stored as Replit Secrets, not committed to source code.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+Users must join `@yazz8ballpool` before they can access the key. Unjoined users
+receive a channel link and a status-check button; joined users can use `/getkey`.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+The requested channel is `@yazz8ballpool`.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- The bot must be an administrator in the channel for reliable membership checks.
+- `/getkey` requires the `GETKEY_VALUE` Secret to be configured before startup.
 
 ## Pointers
 
