@@ -41,6 +41,7 @@ TUTORIAL_URL = "https://youtu.be/94COnGxw15A?si=gVm0Qjos7Cfk_3Ao"
 ADMIN_USERNAME = "@ADAMYOURBAE"
 USERS_DB_PATH = os.getenv("USERS_DB_PATH", "data/users.db")
 DISPLAY_TIMEZONE = os.getenv("BOT_TIMEZONE", "Asia/Jakarta")
+MANUAL_EXPIRY_TEXT = "18 SEPTEMBER 16.37"
 KEY_VALIDITY = timedelta(hours=24)
 MONTH_NAMES_ID = (
     "JANUARI",
@@ -237,7 +238,7 @@ def key_message(key_value: str, expiry: datetime) -> str:
         "🔑 KEY ANDA BERHASIL DIDAPATKAN!\n\n"
         f"• Key: {key_value}\n"
         "• Status: Aktif\n"
-        f"• Expired: [{format_expiry(expiry)}]"
+        f"• Expired: {MANUAL_EXPIRY_TEXT}"
     )
 
 
