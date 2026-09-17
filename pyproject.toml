@@ -1,0 +1,8 @@
+[project]
+name = "telegram-force-subscribe-bot"
+version = "0.1.0"
+description = "Telegram bot with mandatory channel subscription and gated key access"
+requires-python = ">=3.13"
+dependencies = [
+    "python-telegram-bot>=21.0,<23.0",
+]
