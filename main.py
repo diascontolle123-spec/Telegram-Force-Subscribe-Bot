@@ -253,10 +253,11 @@ def format_expiry(expiry: datetime) -> str:
 
 def key_message(key_value: str, expiry: datetime) -> str:
     return (
-        "🔑 KEY ANDA BERHASIL DIDAPATKAN!\n\n"
-        f"• Key: {key_value}\n"
+        "🔗 LINK KEY ANDA BERHASIL DIDAPATKAN!\n\n"
+        f"• Link Key: {key_value}\n"
         "• Status: Aktif\n"
-        f"• Expired: {MANUAL_EXPIRY_TEXT}"
+        f"• Expired: {MANUAL_EXPIRY_TEXT}\n\n"
+        "Silakan klik link di atas untuk mengambil key Anda."
     )
 
 
