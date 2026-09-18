@@ -237,8 +237,6 @@ def subscription_keyboard() -> InlineKeyboardMarkup:
             [InlineKeyboardButton("Cek Status", callback_data=CHECK_STATUS_CALLBACK)],
         ]
     )
-
-
 def get_key_keyboard() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         [[InlineKeyboardButton("Ambil Key", callback_data=GET_KEY_CALLBACK)]]
@@ -246,13 +244,19 @@ def get_key_keyboard() -> InlineKeyboardMarkup:
 
 
 def menu_keyboard() -> ReplyKeyboardMarkup:
+    keyboard = [
+        [KeyboardButton(MENU_GET_KEY)],
+        [KeyboardButton(MENU_LIST_HARGA), KeyboardButton(MENU_ORDER_VIP)],
+        [KeyboardButton(MENU_APK_NINJA), KeyboardButton(MENU_APK_SAMURAI)],
+        [KeyboardButton(MENU_TUTORIAL)],
+    ]
     return ReplyKeyboardMarkup(
-        keyboard = [
-    [KeyboardButton(MENU_GET_KEY)],
-    [KeyboardButton(MENU_LIST_HARGA), KeyboardButton(MENU_ORDER_VIP)],
-    [KeyboardButton(MENU_APK_NINJA), KeyboardButton(MENU_APK_SAMURAI)],
-    [KeyboardButton(MENU_TUTORIAL)]
-]
+        keyboard,
+        resize_keyboard=True,
+        is_persistent=True,
+        input_field_placeholder="Pilih menu",
+    )
+
 reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
         resize_keyboard=True,
