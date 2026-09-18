@@ -678,7 +678,7 @@ async def error_handler(
 
 def build_application(settings: Settings) -> Application:
     application = (
-        Application.builder()
+        ApplicationBuilder()
         .token(settings.bot_token)
         .post_init(post_init)
         .build()
@@ -687,7 +687,7 @@ def build_application(settings: Settings) -> Application:
     application.bot_data["settings"] = settings
     application.bot_data["user_store"] = UserStore(USERS_DB_PATH)
 
-        application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("getkey", get_key))
     application.add_handler(CommandHandler("listharga", list_harga))
     application.add_handler(CommandHandler("ordervip", order_vip))
