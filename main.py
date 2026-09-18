@@ -616,17 +616,24 @@ async def plain_text(
     message = update.effective_message
     if message is not None:
         action = message.text or ""
-        handlers = {
-            MENU_GET_KEY: send_key,
-            MENU_LIST_HARGA: list_harga,
-            MENU_ORDER_VIP: order_vip,
-            MENU_APK_NINJA: apk_ninja,
-            MENU_APK_SAMURAI: apk_samurai,
-            MENU_TUTORIAL: tutorial,
-        }
-        handler = handlers.get(action)
-        if handler is not None:
-            await handler(update, context)
+        
+        if "Get Key" in action:
+            await send_key(update, context)
+            return
+        elif "List Harga" in action:
+            await list_harga(update, context)
+            return
+        elif "Order VIP" in action:
+            await order_vip(update, context)
+            return
+        elif "Ninja" in action:
+            await apk_ninja(update, context)
+            return
+        elif "Samurai" in action:
+            await apk_samurai(update, context)
+            return
+        elif "Tutorial" in action:
+            await tutorial(update, context)
             return
 
         await message.reply_text(
@@ -712,8 +719,10 @@ def build_application(settings: Settings) -> Application:
         )
     )
 
-    application.add_handler(MessageHandler(filters.COMMAND, locked_command))
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, start))
+        # Handler untuk merespons klik tombol menu teks
+    application.add_handler(
+        MessageHandler(filters.TEXT & ~filters.COMMAND, plain_text)
+    )
     application.add_error_handler(error_handler)
 
     return application
