@@ -654,7 +654,7 @@ async def error_handler(
 
 def build_application(settings: Settings) -> Application:
     application = (
-        Application.builder)
+        Application.builder()
         .token(settings.bot_token)
         .post_init(post_init)
         .build)
