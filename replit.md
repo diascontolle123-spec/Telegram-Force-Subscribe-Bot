@@ -7,6 +7,7 @@ memberikan key melalui `/getkey` setelah status keanggotaan terverifikasi.
 
 - `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
 - `python main.py` — run the Telegram bot
+- Flask keep-alive responds with `Bot is Running!` on the configured port
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
@@ -26,6 +27,7 @@ memberikan key melalui `/getkey` setelah status keanggotaan terverifikasi.
 ## Where things live
 
 - `main.py` — Telegram bot, Force Subscribe checks, callbacks, and `/getkey`
+- `main.py` — also owns the background Flask keep-alive and polling reconnect loop
 - `data/users.db` — SQLite database for users, stats, and per-user key expiry
 - `README.md` — setup and operation notes
 
@@ -50,6 +52,7 @@ The requested channel is `@yazz8ballpool`.
 - `/getkey` requires the `GETKEY_VALUE` Secret to be configured before startup.
 - `/stats` requires the numeric `ADMIN_TELEGRAM_ID` environment variable.
 - Key expiry is stored per Telegram user and is renewed only after 24 hours have elapsed.
+- The Telegram polling loop reconnects after Telegram conflicts and network errors.
 
 ## Pointers
 
