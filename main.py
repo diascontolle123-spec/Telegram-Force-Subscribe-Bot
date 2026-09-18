@@ -687,7 +687,7 @@ def build_application(settings: Settings) -> Application:
     application.bot_data["settings"] = settings
     application.bot_data["user_store"] = UserStore(USERS_DB_PATH)
 
-    application.add_handler(CommandHandler("start", start))
+        application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("getkey", get_key))
     application.add_handler(CommandHandler("listharga", list_harga))
     application.add_handler(CommandHandler("ordervip", order_vip))
@@ -712,7 +712,7 @@ def build_application(settings: Settings) -> Application:
     )
 
     application.add_handler(MessageHandler(filters.COMMAND, locked_command))
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, plain_text))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, start))
     application.add_error_handler(error_handler)
 
     return application
