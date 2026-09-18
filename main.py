@@ -349,15 +349,22 @@ async def is_subscribed(
 async def send_subscription_prompt(update: Update) -> None:
     message = update.effective_message
     if message is not None:
-        # Remove a previously displayed menu if a user leaves the channel
-        # after gaining access.
         await message.reply_text(
             "Menu dinonaktifkan sampai kamu join channel.",
             reply_markup=ReplyKeyboardRemove(),
         )
+        
+        pesan_sambutan = (
+            "<b>🔒 AKSES MASIH TERKUNCI!</b>\n\n"
+            "Halo! Untuk menggunakan fitur bot dan mengambil key/APK MOD, "
+            "kamu wajib menjadi anggota channel resmi kami terlebih dahulu.\n\n"
+            "📢 <b>Channel:</b> @yazz8ballpool\n\n"
+            "Silakan klik tombol <b>Join Channel</b> di bawah, lalu tekan <b>Cek Status</b> untuk membuka menu!"
+        )
+        
         await message.reply_text(
-            subscription_message(),
-            parse_mode=ParseMode.MARKDOWN,
+            pesan_sambutan,
+            parse_mode=ParseMode.HTML,
             reply_markup=subscription_keyboard(),
         )
 
