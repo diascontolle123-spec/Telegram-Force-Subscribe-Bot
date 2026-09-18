@@ -248,7 +248,7 @@ def menu_keyboard() -> ReplyKeyboardMarkup:
         [KeyboardButton(MENU_GET_KEY)],
         [KeyboardButton(MENU_LIST_HARGA), KeyboardButton(MENU_ORDER_VIP)],
         [KeyboardButton(MENU_APK_NINJA), KeyboardButton(MENU_APK_SAMURAI)],
-        [KeyboardButton(MENU_TUTORIAL)],
+        [KeyboardButton(MENU_TUTORIAL)]
     ]
     return ReplyKeyboardMarkup(
         keyboard,
@@ -257,12 +257,6 @@ def menu_keyboard() -> ReplyKeyboardMarkup:
         input_field_placeholder="Pilih menu",
     )
 
-reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
-
-        resize_keyboard=True,
-        is_persistent=True,
-        input_field_placeholder="Pilih menu",
-    )
 
 
 def subscription_message() -> str:
