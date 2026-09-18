@@ -628,20 +628,38 @@ async def plain_text(
 
 
 
+from telegram import BotCommand, BotCommandScopeAllPrivateChats, BotCommandScopeChat
+
+ADMIN_USER_ID = 6690938253  # GANTI DENGAN USER ID TELEGRAM ANDA (ANGKA)
+
 async def post_init(application: Application) -> None:
+    # 1. Daftar Perintah untuk USER BIASA (Perintah Admin Disembunyikan)
+    user_commands = [
+        BotCommand("start", "Mulai dan cek akses"),
+        BotCommand("getkey", "Ambil key setelah join channel"),
+        BotCommand("listharga", "Lihat daftar harga MOD dan VIP"),
+        BotCommand("ordervip", "Lihat harga VIP dan kontak admin"),
+        BotCommand("apkninja", "Dapatkan link APK MOD Ninja"),
+        BotCommand("apksamurai", "Dapatkan link APK MOD Samurai"),
+        BotCommand("tutorial", "Lihat tutorial penggunaan"),
+    ]
     await application.bot.set_my_commands(
-        [
-            ("start", "Mulai dan cek akses"),
-            ("getkey", "Ambil key setelah join channel"),
-            ("listharga", "Lihat daftar harga MOD dan VIP"),
-            ("ordervip", "Lihat harga VIP dan kontak admin"),
-            ("apkninja", "Dapatkan link APK MOD Ninja"),
-            ("apksamurai", "Dapatkan link APK MOD Samurai"),
-            ("togglesamurai", "Buka/Tutup akses APK Samurai (Admin)"),
-            ("tutorial", "Lihat tutorial penggunaan"),
-            ("stats", "Statistik bot untuk admin"),
-        ]
+        user_commands, 
+        scope=BotCommandScopeAllPrivateChats()
     )
+
+    # 2. Daftar Perintah Khusus ADMIN (Hanya Muncul di Chat Admin)
+    admin_commands = user_commands + [
+        BotCommand("togglesamurai", "Buka/Tutup akses APK Samurai"),
+        BotCommand("stats", "Statistik bot untuk admin"),
+    ]
+    try:
+        await application.bot.set_my_commands(
+            admin_commands, 
+            scope=BotCommandScopeChat(chat_id=ADMIN_USER_ID)
+        )
+    except Exception as e:
+        LOGGER.warning("Gagal mengatur menu admin: %s", e)
 
     LOGGER.info("Telegram bot started; protected channel: %s", CHANNEL_USERNAME)
 
