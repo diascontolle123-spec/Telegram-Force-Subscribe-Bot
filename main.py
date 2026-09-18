@@ -19,7 +19,7 @@ from telegram import (
     Update,
 )
 from telegram.constants import ParseMode
-from telegram.error import Conflict, NetworkError, TelegramError
+from telegram.error import Conflict, NetworkError, TelegramError, BadRequest
 from telegram.ext import (
     Application,
     CallbackQueryHandler,
