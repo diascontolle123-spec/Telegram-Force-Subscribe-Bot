@@ -51,7 +51,7 @@ TUTORIAL_URL = "https://youtu.be/94COnGxw15A?si=gVm0Qjos7Cfk_3Ao"
 ADMIN_USERNAME = "@ADAMYOURBAE"
 USERS_DB_PATH = os.getenv("USERS_DB_PATH", "data/users.db")
 DISPLAY_TIMEZONE = os.getenv("BOT_TIMEZONE", "Asia/Jakarta")
-MAX_DEVICES_TEXT = "999 Devices"
+MAX_DEVICE_TEXT = "999 Devices"
 MANUAL_EXPIRY_TEXT = "19 September 21:50"
 KEEP_ALIVE_PORT = int(os.getenv("KEEP_ALIVE_PORT", os.getenv("PORT", "5000")))
 RECONNECT_DELAY_SECONDS = int(os.getenv("RECONNECT_DELAY_SECONDS", "5"))
@@ -390,19 +390,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def send_key(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    settings: Settings = context.application.bot_data["settings"]
-    user = update.effective_user
-    message = update.effective_message
-    if user is not None and message is not None:
-        user_store: UserStore = context.application.bot_data["user_store"]
-        expiry = user_store.issue_key_window(user.id)
-        await message.reply_text(
-            key_message(settings.key_value, expiry),
-            reply_markup=menu_keyboard(),
-        )
-
-
-async def get_key(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not await is_subscribed(update, context):
         await send_subscription_prompt(update)
         return
@@ -410,9 +397,9 @@ async def get_key(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     message = update.effective_message
     if message is not None:
         pesan_key = (
-            "<b>🔗 LINK KEY ANDA BERHASIL DIDAPATKAN!</b>\n\n"
+            "🔗 <b>LINK KEY ANDA BERHASIL DIDAPATKAN!</b>\n\n"
             f"• <b>Link Key:</b> {GET_KEY_URL}\n"
-            f"• <b>Max Device:</b> {MAX_DEVICES_TEXT}\n"
+            f"• <b>Max Device:</b> {MAX_DEVICE_TEXT}\n"
             f"• <b>Status:</b> Aktif\n"
             f"• <b>Expired:</b> {MANUAL_EXPIRY_TEXT}\n\n"
             "<i>Silakan klik link di atas untuk mengambil key Anda.</i>"
@@ -422,6 +409,10 @@ async def get_key(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             parse_mode=ParseMode.HTML,
             disable_web_page_preview=False,
         )
+
+
+async def get_key(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await send_key(update, context)
 
 
 async def order_vip(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
