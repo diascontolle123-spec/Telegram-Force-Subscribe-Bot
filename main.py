@@ -651,14 +651,14 @@ async def error_handler(
 ) -> None:
     LOGGER.error("Unhandled Telegram update error", exc_info=context.error)
 
-
 def build_application(settings: Settings) -> Application:
     application = (
         Application.builder()
         .token(settings.bot_token)
         .post_init(post_init)
-        .build)
+        .build()
     )
+
     application.bot_data["settings"] = settings
     application.bot_data["user_store"] = UserStore(USERS_DB_PATH)
 
