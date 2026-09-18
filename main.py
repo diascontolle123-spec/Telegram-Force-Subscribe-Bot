@@ -407,7 +407,21 @@ async def get_key(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await send_subscription_prompt(update)
         return
 
-    await send_key(update, context)
+    message = update.effective_message
+    if message is not None:
+        pesan_key = (
+            "<b>🔗 LINK KEY ANDA BERHASIL DIDAPATKAN!</b>\n\n"
+            f"• <b>Link Key:</b> {GET_KEY_URL}\n"
+            f"• <b>Max Device:</b> {MAX_DEVICES_TEXT}\n"
+            f"• <b>Status:</b> Aktif\n"
+            f"• <b>Expired:</b> {MANUAL_EXPIRY_TEXT}\n\n"
+            "<i>Silakan klik link di atas untuk mengambil key Anda.</i>"
+        )
+        await message.reply_text(
+            pesan_key,
+            parse_mode=ParseMode.HTML,
+            disable_web_page_preview=False,
+        )
 
 
 async def order_vip(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
