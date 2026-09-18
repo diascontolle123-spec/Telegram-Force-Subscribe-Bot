@@ -687,3 +687,29 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+import os
+from threading import Thread
+from flask import Flask
+
+# 1. Buat web server mini
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "Bot is alive!"
+
+def run():
+    # Render memberikan PORT secara otomatis lewat environment variable
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host='0.0.0.0', port=port)
+
+def keep_alive():
+    t = Thread(target=run)
+    t.start()
+
+# 2. Panggil keep_alive() sebelum bot.polling()
+if __name__ == "__main__":
+    keep_alive()
+    print("Bot sedang berjalan...")
+    # Masukkan kode bot polling Anda di bawah ini
+    # bot.infinity_polling()
