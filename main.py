@@ -608,14 +608,14 @@ async def plain_text(
     message = update.effective_message
     if message is not None:
         action = message.text or ""
-                handlers = {
+        handlers = {
             MENU_GET_KEY: send_key,
             MENU_LIST_HARGA: list_harga,
             MENU_ORDER_VIP: order_vip,
             MENU_APK_NINJA: apk_ninja,
             MENU_APK_SAMURAI: apk_samurai,
             MENU_TUTORIAL: tutorial,
-                }
+        }
         handler = handlers.get(action)
         if handler is not None:
             await handler(update, context)
@@ -625,6 +625,7 @@ async def plain_text(
             "Pilih salah satu tombol menu di bawah.",
             reply_markup=menu_keyboard(),
         )
+
 
 
         async def post_init(application: Application) -> None:
