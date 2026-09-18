@@ -16,6 +16,10 @@ join channel `@yazz8ballpool`.
 - Menyediakan `/stats` khusus untuk Telegram Admin ID yang dikonfigurasi.
 - Memberikan masa aktif key 24 jam per user sejak pertama kali `/getkey`
   berhasil digunakan, lalu memperbarui expiry setelah masa aktif habis.
+- Menjalankan Flask keep-alive di background thread dengan respons
+  `Bot is Running!`.
+- Mencoba menyambungkan ulang polling Telegram otomatis saat terjadi konflik
+  atau error jaringan.
 - Token bot tidak disimpan di source code.
 
 ## Konfigurasi
@@ -29,6 +33,8 @@ Atur dua environment variable berikut:
   beberapa baris. Default-nya meminta pengguna menghubungi admin.
 - `USERS_DB_PATH` — lokasi database SQLite user, default `data/users.db`.
 - `BOT_TIMEZONE` — timezone untuk menampilkan expiry, default `Asia/Jakarta`.
+- `KEEP_ALIVE_PORT` — port Flask keep-alive, default `5000` atau nilai `PORT`.
+- `RECONNECT_DELAY_SECONDS` — jeda sebelum reconnect polling, default `5`.
 
 Opsional:
 

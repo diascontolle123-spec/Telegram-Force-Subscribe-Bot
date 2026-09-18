@@ -3,11 +3,14 @@ from __future__ import annotations
 import logging
 import os
 import sqlite3
+import time
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from threading import Thread
 from zoneinfo import ZoneInfo
 
+from flask import Flask
 from telegram import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
@@ -16,7 +19,7 @@ from telegram import (
     Update,
 )
 from telegram.constants import ParseMode
-from telegram.error import TelegramError
+from telegram.error import Conflict, NetworkError, TelegramError
 from telegram.ext import (
     Application,
     CallbackQueryHandler,
@@ -43,6 +46,8 @@ ADMIN_USERNAME = "@ADAMYOURBAE"
 USERS_DB_PATH = os.getenv("USERS_DB_PATH", "data/users.db")
 DISPLAY_TIMEZONE = os.getenv("BOT_TIMEZONE", "Asia/Jakarta")
 MANUAL_EXPIRY_TEXT = "19 September 02:55"
+KEEP_ALIVE_PORT = int(os.getenv("KEEP_ALIVE_PORT", os.getenv("PORT", "5000")))
+RECONNECT_DELAY_SECONDS = int(os.getenv("RECONNECT_DELAY_SECONDS", "5"))
 KEY_VALIDITY = timedelta(hours=24)
 MONTH_NAMES_ID = (
     "JANUARI",
@@ -259,6 +264,36 @@ def key_message(key_value: str, expiry: datetime) -> str:
         f"• Expired: {MANUAL_EXPIRY_TEXT}\n\n"
         "Silakan klik link di atas untuk mengambil key Anda."
     )
+
+
+def create_keep_alive_app() -> Flask:
+    keep_alive_app = Flask(__name__)
+
+    @keep_alive_app.get("/")
+    def health_check() -> str:
+        return "Bot is Running!"
+
+    return keep_alive_app
+
+
+def start_keep_alive_server() -> None:
+    keep_alive_app = create_keep_alive_app()
+
+    def serve() -> None:
+        keep_alive_app.run(
+            host="0.0.0.0",
+            port=KEEP_ALIVE_PORT,
+            debug=False,
+            use_reloader=False,
+        )
+
+    thread = Thread(
+        target=serve,
+        name="telegram-bot-keep-alive",
+        daemon=True,
+    )
+    thread.start()
+    LOGGER.info("Keep-alive Flask server started on port %s", KEEP_ALIVE_PORT)
 
 
 async def is_subscribed(
@@ -612,14 +647,42 @@ def build_application(settings: Settings) -> Application:
     return application
 
 
+def run_polling_forever(settings: Settings) -> None:
+    while True:
+        application = build_application(settings)
+        try:
+            application.run_polling(
+                allowed_updates=Update.ALL_TYPES,
+                close_loop=False,
+            )
+            LOGGER.warning("Telegram polling stopped; reconnecting")
+        except (Conflict, NetworkError) as error:
+            LOGGER.warning(
+                "Telegram polling connection issue (%s); reconnecting in %s seconds",
+                error.__class__.__name__,
+                RECONNECT_DELAY_SECONDS,
+            )
+        except TelegramError:
+            LOGGER.exception(
+                "Telegram polling failed; reconnecting in %s seconds",
+                RECONNECT_DELAY_SECONDS,
+            )
+        except Exception:
+            LOGGER.exception(
+                "Unexpected polling error; reconnecting in %s seconds",
+                RECONNECT_DELAY_SECONDS,
+            )
+        time.sleep(RECONNECT_DELAY_SECONDS)
+
+
 def main() -> None:
     logging.basicConfig(
         format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
         level=os.getenv("LOG_LEVEL", "INFO").upper(),
     )
     settings = Settings.from_environment()
-    application = build_application(settings)
-    application.run_polling(allowed_updates=Update.ALL_TYPES)
+    start_keep_alive_server()
+    run_polling_forever(settings)
 
 
 if __name__ == "__main__":
