@@ -38,9 +38,13 @@ GET_KEY_CALLBACK = "get_key"
 MENU_GET_KEY = "🔑 Get Key"
 MENU_LIST_HARGA = "📊 List Harga"
 MENU_ORDER_VIP = "🛒 Order VIP"
-MENU_APK = "📥 Link APK MOD"
+MENU_APK_NINJA = "📥 Link APK Ninja"
+MENU_APK_SAMURAI = "⚔️ Link APK Samurai"
 MENU_TUTORIAL = "📖 Tutorial"
-APK_MOD_URL = "https://sub4unlock.com/S/05mxk"
+APK_NINJA_URL = "https://sub4unlock.com/S/05mxk"
+APK_SAMURAI_URL = "https://sub4unlock.com/S/Z5olj"
+# Status Kunci Samurai (Default: Terkunci)
+SAMURAI_ACCESS_OPEN = False
 TUTORIAL_URL = "https://youtu.be/94COnGxw15A?si=gVm0Qjos7Cfk_3Ao"
 ADMIN_USERNAME = "@ADAMYOURBAE"
 USERS_DB_PATH = os.getenv("USERS_DB_PATH", "data/users.db")
@@ -82,8 +86,19 @@ SAMURAI ENGGINE :
 • Permanent: Contacts Admin
 
 💳 Pembayaran: BINANCE / PAYPAL / DANA / QRIS / MANDIRI
-💬 Pembelian & Pertanyaan: @ADAMYOURBAE"""
-
+💬 Pembelian & Pertanyaan: @ADAMYOURBAE
+"""
+async def toggle_samurai_access(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    global SAMURAI_ACCESS_OPEN
+    user = update.effective_user
+    
+    # Memeriksa apakah pengirim adalah admin (@ADAMYOURBAE)
+    if user.username and user.username.lower() == ADMIN_USERNAME.replace("@", "").lower():
+        SAMURAI_ACCESS_OPEN = not SAMURAI_ACCESS_OPEN
+        status_text = "🔓 TERBUKA (Pengguna bisa mengambil link)" if SAMURAI_ACCESS_OPEN else "🔒 TERKUNCI (Akses dibatasi)"
+        await update.message.reply_text(f"Status Akses APK Samurai: {status_text}")
+    else:
+        await update.message.reply_text("⛔ Anda tidak memiliki akses untuk perintah ini.")
 
 @dataclass(frozen=True)
 class Settings:
@@ -232,11 +247,14 @@ def get_key_keyboard() -> InlineKeyboardMarkup:
 
 def menu_keyboard() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
-        [
-            [MENU_GET_KEY, MENU_LIST_HARGA],
-            [MENU_ORDER_VIP, MENU_APK],
-            [MENU_TUTORIAL],
-        ],
+        keyboard = [
+    [KeyboardButton(MENU_GET_KEY)],
+    [KeyboardButton(MENU_LIST_HARGA), KeyboardButton(MENU_ORDER_VIP)],
+    [KeyboardButton(MENU_APK_NINJA), KeyboardButton(MENU_APK_SAMURAI)],
+    [KeyboardButton(MENU_TUTORIAL)]
+]
+reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+
         resize_keyboard=True,
         is_persistent=True,
         input_field_placeholder="Pilih menu",
@@ -561,6 +579,26 @@ async def locked_command(
     if message is not None:
         await message.reply_text("Perintah tidak dikenal. Gunakan /getkey.")
 
+async def apk_ninja(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.effective_message.reply_text(
+        f"<b>📥 Link APK MOD Ninja:</b>\n{APK_NINJA_URL}",
+        parse_mode=ParseMode.HTML,
+        disable_web_page_preview=True
+    )
+
+async def apk_samurai(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not SAMURAI_ACCESS_OPEN:
+        await update.effective_message.reply_text(
+            "🔒 <b>Akses APK MOD Samurai Sedang Terkunci!</b>\n\n"
+            "Menu ini sedang ditutup oleh Admin. Silakan tunggu informasi resmi di channel atau hubungi Admin.",
+            parse_mode=ParseMode.HTML
+        )
+    else:
+        await update.effective_message.reply_text(
+            f"<b>⚔️ Link APK MOD Samurai:</b>\n{APK_SAMURAI_URL}",
+            parse_mode=ParseMode.HTML,
+            disable_web_page_preview=True
+        )
 
 async def plain_text(
     update: Update, context: ContextTypes.DEFAULT_TYPE
@@ -572,13 +610,14 @@ async def plain_text(
     message = update.effective_message
     if message is not None:
         action = message.text or ""
-        handlers = {
+                handlers = {
             MENU_GET_KEY: send_key,
             MENU_LIST_HARGA: list_harga,
             MENU_ORDER_VIP: order_vip,
-            MENU_APK: apk_ninja,
+            MENU_APK_NINJA: apk_ninja,
+            MENU_APK_SAMURAI: apk_samurai,
             MENU_TUTORIAL: tutorial,
-        }
+                }
         handler = handlers.get(action)
         if handler is not None:
             await handler(update, context)
@@ -590,14 +629,16 @@ async def plain_text(
         )
 
 
-async def post_init(application: Application) -> None:
+        async def post_init(application: Application) -> None:
     await application.bot.set_my_commands(
         [
             ("start", "Mulai dan cek akses"),
             ("getkey", "Ambil key setelah join channel"),
             ("listharga", "Lihat daftar harga MOD dan VIP"),
             ("ordervip", "Lihat harga VIP dan kontak admin"),
-            ("apkninja", "Dapatkan link APK MOD"),
+            ("apkninja", "Dapatkan link APK MOD Ninja"),
+            ("apksamurai", "Dapatkan link APK MOD Samurai"),
+            ("togglesamurai", "Buka/Tutup akses APK Samurai (Admin)"),
             ("tutorial", "Lihat tutorial penggunaan"),
             ("stats", "Statistik bot untuk admin"),
         ]
@@ -613,10 +654,10 @@ async def error_handler(
 
 def build_application(settings: Settings) -> Application:
     application = (
-        Application.builder()
+        Application.builder)
         .token(settings.bot_token)
         .post_init(post_init)
-        .build()
+        .build)
     )
     application.bot_data["settings"] = settings
     application.bot_data["user_store"] = UserStore(USERS_DB_PATH)
@@ -629,6 +670,8 @@ def build_application(settings: Settings) -> Application:
     application.add_handler(CommandHandler("tutorial", tutorial))
     application.add_handler(CommandHandler("help", help_command))
     application.add_handler(CommandHandler("stats", stats))
+    application.add_handler(CommandHandler("start", start_command))
+    application.add_handler(CommandHandler("togglesamurai", toggle_samurai_access))  # <--- DITAMBAHKAN DI SINI
     application.add_handler(
         CallbackQueryHandler(
             check_status_callback,
