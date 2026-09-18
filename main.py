@@ -254,11 +254,11 @@ def menu_keyboard() -> ReplyKeyboardMarkup:
                 KeyboardButton("📊 List Harga"),
             ],
             [
-                KeyboardButton("🛒 Order VIP"),
+                KeyboardButton("⚔️ Link APK Samurai"),
                 KeyboardButton("🥷 Link APK Ninja"),
             ],
             [
-                KeyboardButton("⚔️ Link APK Samurai"),
+                KeyboardButton("🛒 Order VIP"),
             ],
             [
                 KeyboardButton("📖 Tutorial"),
