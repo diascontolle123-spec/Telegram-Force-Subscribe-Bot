@@ -628,7 +628,7 @@ async def plain_text(
 
 
 
-        async def post_init(application: Application) -> None:
+async def post_init(application: Application) -> None:
     await application.bot.set_my_commands(
         [
             ("start", "Mulai dan cek akses"),
@@ -642,6 +642,7 @@ async def plain_text(
             ("stats", "Statistik bot untuk admin"),
         ]
     )
+
     LOGGER.info("Telegram bot started; protected channel: %s", CHANNEL_USERNAME)
 
 
