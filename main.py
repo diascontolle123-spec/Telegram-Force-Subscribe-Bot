@@ -667,11 +667,12 @@ def build_application(settings: Settings) -> Application:
     application.add_handler(CommandHandler("listharga", list_harga))
     application.add_handler(CommandHandler("ordervip", order_vip))
     application.add_handler(CommandHandler(["apkninja", "linkapkmod"], apk_ninja))
+    application.add_handler(CommandHandler("apksamurai", apk_samurai))
+    application.add_handler(CommandHandler("togglesamurai", toggle_samurai_access))
     application.add_handler(CommandHandler("tutorial", tutorial))
     application.add_handler(CommandHandler("help", help_command))
     application.add_handler(CommandHandler("stats", stats))
-    application.add_handler(CommandHandler("start", start_command))
-    application.add_handler(CommandHandler("togglesamurai", toggle_samurai_access))  # <--- DITAMBAHKAN DI SINI
+
     application.add_handler(
         CallbackQueryHandler(
             check_status_callback,
@@ -684,10 +685,13 @@ def build_application(settings: Settings) -> Application:
             pattern=f"^{GET_KEY_CALLBACK}$",
         )
     )
+
     application.add_handler(MessageHandler(filters.COMMAND, locked_command))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, plain_text))
     application.add_error_handler(error_handler)
+
     return application
+
 
 
 def run_polling_forever(settings: Settings) -> None:
