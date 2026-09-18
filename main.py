@@ -244,17 +244,24 @@ def get_key_keyboard() -> InlineKeyboardMarkup:
 
 
 def menu_keyboard() -> ReplyKeyboardMarkup:
-    keyboard = [
-        [KeyboardButton(MENU_GET_KEY)],
-        [KeyboardButton(MENU_LIST_HARGA), KeyboardButton(MENU_ORDER_VIP)],
-        [KeyboardButton(MENU_APK_NINJA), KeyboardButton(MENU_APK_SAMURAI)],
-        [KeyboardButton(MENU_TUTORIAL)]
-    ]
     return ReplyKeyboardMarkup(
-        keyboard,
+        [
+            [
+                KeyboardButton("🔑 Get Key"),
+                KeyboardButton("📊 List Harga"),
+            ],
+            [
+                KeyboardButton("🛒 Order VIP"),
+                KeyboardButton("🥷 Link APK Ninja"),
+            ],
+            [
+                KeyboardButton("⚔️ Link APK Samurai"),
+            ],
+            [
+                KeyboardButton("📖 Tutorial"),
+            ],
+        ],
         resize_keyboard=True,
-        is_persistent=True,
-        input_field_placeholder="Pilih menu",
     )
 
 
