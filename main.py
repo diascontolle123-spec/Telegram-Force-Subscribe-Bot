@@ -44,16 +44,16 @@ MENU_APK_SAMURAI = "⚔️ Link APK Samurai"
 MENU_TUTORIAL = "📖 Tutorial"
 APK_NINJA_URL = "https://sub4unlock.com/S/05mxk"
 APK_SAMURAI_URL = "https://sub4unlock.com/S/Z5olj"
-GET_KEY_URL = "EXPIRED"
-STATUS_TEXT = "EXPIRED"
+GET_KEY_URL = "20 LIKE RELEASE"
+STATUS_TEXT = "AKTIF"
 # Status Kunci Samurai (Default: Terkunci)
 SAMURAI_ACCESS_OPEN = False
 TUTORIAL_URL = "https://youtu.be/94COnGxw15A?si=gVm0Qjos7Cfk_3Ao"
 ADMIN_USERNAME = "@ADAMYOURBAE"
 USERS_DB_PATH = os.getenv("USERS_DB_PATH", "data/users.db")
 DISPLAY_TIMEZONE = os.getenv("BOT_TIMEZONE", "Asia/Jakarta")
-MAX_DEVICE_TEXT = "EXPIRED"
-MANUAL_EXPIRY_TEXT = "-"
+MAX_DEVICE_TEXT = "50"
+MANUAL_EXPIRY_TEXT = "21 SEPTEMBER 03:30"
 KEEP_ALIVE_PORT = int(os.getenv("KEEP_ALIVE_PORT", os.getenv("PORT", "5000")))
 RECONNECT_DELAY_SECONDS = int(os.getenv("RECONNECT_DELAY_SECONDS", "5"))
 KEY_VALIDITY = timedelta(hours=24)
