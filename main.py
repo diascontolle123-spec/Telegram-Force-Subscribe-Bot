@@ -44,7 +44,7 @@ MENU_APK_SAMURAI = "⚔️ Link APK Samurai"
 MENU_TUTORIAL = "📖 Tutorial"
 APK_NINJA_URL = "https://sub4unlock.com/S/05mxk"
 APK_SAMURAI_URL = "https://sub4unlock.com/S/Z5olj"
-GET_KEY_URL = "20 LIKE RELEASE"
+GET_KEY_URL = "https://exe.io/GetKeyNinja"
 STATUS_TEXT = "AKTIF"
 # Status Kunci Samurai (Default: Terkunci)
 SAMURAI_ACCESS_OPEN = False
