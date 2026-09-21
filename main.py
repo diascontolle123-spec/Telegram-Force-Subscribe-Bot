@@ -37,7 +37,7 @@ CHANNEL_URL = os.getenv("CHANNEL_URL", "https://t.me/yazz8ballpool")
 CHECK_STATUS_CALLBACK = "check_subscription"
 GET_KEY_CALLBACK = "get_key"
 MENU_GET_KEY = "🔑 Get Key"
-MENU_LIST_HARGA = "📊 List Price"
+MENU_LIST_PRICE = "📊 List Price"
 MENU_ORDER_VIP = "🛒 Order VIP"
 MENU_APK_NINJA = "📥 Link APK Ninja"
 MENU_APK_SAMURAI = "⚔️ Link APK Samurai"
@@ -75,7 +75,7 @@ DEFAULT_VIP_PRICES = (
     "Daftar harga VIP belum diatur.\n"
     "Silakan hubungi admin untuk mendapatkan harga terbaru."
 )
-LIST_HARGA_MESSAGE = """📊 DAFTAR HARGA MOD & VIP ENGINE
+LIST_HARGA_MESSAGE = """📊 LIST PRICE MOD & VIP ENGINE
 
 NINJA ENGGINE :
 • 7 Day: 40K - $5.50
@@ -488,7 +488,7 @@ async def help_command(
         await message.reply_text(
             "Perintah yang tersedia:\n"
             "/getkey — mengambil key\n"
-            "/listharga — melihat daftar harga MOD & VIP Engine\n"
+            "/listprice — melihat daftar harga MOD & VIP Engine\n"
             "/ordervip — melihat harga VIP dan kontak admin\n"
             "/apkninja — mendapatkan link APK MOD\n"
             "/tutorial — melihat petunjuk penggunaan",
@@ -637,7 +637,7 @@ async def plain_text(
             await send_key(update, context)
             return
         elif "List Harga" in action:
-            await list_harga(update, context)
+            await list_price(update, context)
             return
         elif "Order VIP" in action:
             await order_vip(update, context)
@@ -668,7 +668,7 @@ async def post_init(application: Application) -> None:
     user_commands = [
         BotCommand("start", "Mulai dan cek akses"),
         BotCommand("getkey", "Ambil key setelah join channel"),
-        BotCommand("listharga", "Lihat daftar harga MOD dan VIP"),
+        BotCommand("listprice", "Lihat daftar harga MOD dan VIP"),
         BotCommand("ordervip", "Lihat harga VIP dan kontak admin"),
         BotCommand("apkninja", "Dapatkan link APK MOD Ninja"),
         BotCommand("apksamurai", "Dapatkan link APK MOD Samurai"),
@@ -713,7 +713,7 @@ def build_application(settings: Settings) -> Application:
 
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("getkey", get_key))
-    application.add_handler(CommandHandler("listharga", list_harga))
+    application.add_handler(CommandHandler("listprice", list_price))
     application.add_handler(CommandHandler("ordervip", order_vip))
     application.add_handler(CommandHandler(["apkninja", "linkapkmod"], apk_ninja))
     application.add_handler(CommandHandler("apksamurai", apk_samurai))
