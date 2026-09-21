@@ -713,7 +713,7 @@ def build_application(settings: Settings) -> Application:
 
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("getkey", get_key))
-    application.add_handler(CommandHandler("listprice", listharga))
+    application.add_handler(CommandHandler("listprice", list_price))
     application.add_handler(CommandHandler("ordervip", order_vip))
     application.add_handler(CommandHandler(["apkninja", "linkapkmod"], apk_ninja))
     application.add_handler(CommandHandler("apksamurai", apk_samurai))
