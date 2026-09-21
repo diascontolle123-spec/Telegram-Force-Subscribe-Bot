@@ -78,15 +78,15 @@ DEFAULT_VIP_PRICES = (
 LIST_HARGA_MESSAGE = """📊 DAFTAR HARGA MOD & VIP ENGINE
 
 NINJA ENGGINE :
-• 7 Day: 40K - $2.60
-• 15 Day: 70K - $4.50
-• 30 Day: 110K - $7.10
+• 7 Day: 40K - $5.50
+• 15 Day: 70K - $8
+• 30 Day: 110K - $10.50
 • Permanent: Contacts Admin
 
 SAMURAI ENGGINE :
-• 7 Day: 45K - $2.90
-• 15 Day: 80K - $5.20
-• 30 Day: 115K - $7.40
+• 7 Day: 45K - $6
+• 15 Day: 80K - $8.50
+• 30 Day: 115K - $11.50
 • Permanent: Contacts Admin
 
 💳 Pembayaran: BINANCE / PAYPAL / DANA / QRIS / MANDIRI
