@@ -37,7 +37,7 @@ CHANNEL_URL = os.getenv("CHANNEL_URL", "https://t.me/yazz8ballpool")
 CHECK_STATUS_CALLBACK = "check_subscription"
 GET_KEY_CALLBACK = "get_key"
 MENU_GET_KEY = "🔑 Get Key"
-MENU_LIST_HARGA = "📊 List Harga"
+MENU_LIST_HARGA = "📊 List Price"
 MENU_ORDER_VIP = "🛒 Order VIP"
 MENU_APK_NINJA = "📥 Link APK Ninja"
 MENU_APK_SAMURAI = "⚔️ Link APK Samurai"
@@ -252,7 +252,7 @@ def menu_keyboard() -> ReplyKeyboardMarkup:
         [
             [
                 KeyboardButton("🔑 Get Key"),
-                KeyboardButton("📊 List Harga"),
+                KeyboardButton("📊 List Price"),
             ],
             [
                 KeyboardButton("⚔️ Link APK Samurai"),
