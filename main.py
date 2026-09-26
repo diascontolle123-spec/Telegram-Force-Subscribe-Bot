@@ -53,7 +53,7 @@ ADMIN_USERNAME = "@ADAMYOURBAE"
 USERS_DB_PATH = os.getenv("USERS_DB_PATH", "data/users.db")
 DISPLAY_TIMEZONE = os.getenv("BOT_TIMEZONE", "Asia/Jakarta")
 MAX_DEVICE_TEXT = "0/150 Devices"
-MANUAL_EXPIRY_TEXT = "EXPIRED"
+MANUAL_EXPIRY_TEXT = "27 September 12:00"
 KEEP_ALIVE_PORT = int(os.getenv("KEEP_ALIVE_PORT", os.getenv("PORT", "5000")))
 RECONNECT_DELAY_SECONDS = int(os.getenv("RECONNECT_DELAY_SECONDS", "5"))
 KEY_VALIDITY = timedelta(hours=24)
