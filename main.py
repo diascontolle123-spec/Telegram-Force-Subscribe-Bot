@@ -290,7 +290,7 @@ def key_message(key_value: str, expiry: datetime) -> str:
             f"• Max Device: {MAX_DEVICE_TEXT}\n"
             f"• Status: EXPIRED\n"
             f"• Expired: {MANUAL_EXPIRY_TEXT}\n\n"
-            f"Silakan klik link di atas untuk mengambil key Anda."
+            f"Silakan copy key di atas untuk mengambil key Anda."
     )
 
 
@@ -404,7 +404,7 @@ async def send_key(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             f"• <b>Max Device:</b> {MAX_DEVICE_TEXT}\n"
             f"• <b>Status:</b> Aktif\n"
             f"• <b>Expired:</b> {MANUAL_EXPIRY_TEXT}\n\n"
-            "<i>Silakan klik link di atas untuk mengambil key Anda.</i>"
+            "<i>Silakan copy key di atas untuk mengambil key Anda.</i>"
         )
         await message.reply_text(
             pesan_key,
