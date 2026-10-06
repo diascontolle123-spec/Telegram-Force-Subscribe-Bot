@@ -285,8 +285,8 @@ def format_expiry(expiry: datetime) -> str:
 
 def key_message(key_value: str, expiry: datetime) -> str:
     return (
-            f"🔗 LINK KEY ANDA BERHASIL DIDAPATKAN!\n\n"
-            f"• Link Key: {GET_KEY_URL}\n"
+            f"🔗 KEY ANDA BERHASIL DIDAPATKAN!\n\n"
+            f"• Key: {GET_KEY_URL}\n"
             f"• Max Device: {MAX_DEVICE_TEXT}\n"
             f"• Status: EXPIRED\n"
             f"• Expired: {MANUAL_EXPIRY_TEXT}\n\n"
@@ -399,8 +399,8 @@ async def send_key(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     message = update.effective_message
     if message is not None:
         pesan_key = (
-            "🔗 <b>LINK KEY ANDA BERHASIL DIDAPATKAN!</b>\n\n"
-            f"• <b>Link Key:</b> {GET_KEY_URL}\n"
+            "🔗 <b>KEY ANDA BERHASIL DIDAPATKAN!</b>\n\n"
+            f"• <b>Key:</b> {GET_KEY_URL}\n"
             f"• <b>Max Device:</b> {MAX_DEVICE_TEXT}\n"
             f"• <b>Status:</b> Aktif\n"
             f"• <b>Expired:</b> {MANUAL_EXPIRY_TEXT}\n\n"
