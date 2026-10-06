@@ -43,7 +43,7 @@ MENU_APK_NINJA = "📥 Link APK Ninja"
 MENU_APK_SAMURAI = "⚔️ Link APK Samurai"
 MENU_TUTORIAL = "📖 Tutorial"
 APK_NINJA_URL = "https://sub4unlock.com/S/05mxk"
-APK_SAMURAI_URL = "https://sub4unlock.com/S/P5vfp"
+APK_SAMURAI_URL = "https://sub4unlock.com/S/N655y"
 GET_KEY_URL = "ADAMZ-SAMURAI-8C8F0CFE"
 STATUS_TEXT = "-"
 # Status Kunci Samurai (Default: Terkunci)
