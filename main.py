@@ -269,13 +269,18 @@ def format_expiry(expiry: datetime) -> str:
 
 
 def key_message(key_value: str, expiry: datetime) -> str:
+    # Mengamankan tanda strip (-) agar tidak meledakkan parser Telegram
+    safe_key = GET_KEY_URL.replace("-", r"\-")
+    safe_expiry = MANUAL_EXPIRY_TEXT.replace("-", r"\-")
+    safe_status = STATUS_TEXT.replace("-", r"\-")
+
     return (
-        "<b>🔑 KEY ANDA BERHASIL DIDAPATKAN!</b>\n\n"
-        f"• Key: <code>{GET_KEY_URL}</code>\n"
+        r"*🔑 KEY ANDA BERHASIL DIDAPATKAN\!*" + "\n\n"
+        f"• Key: `{safe_key}`\n"
         f"• Max Device: {MAX_DEVICE_TEXT}\n"
-        f"• Status: {STATUS_TEXT}\n"
-        f"• Expired: {MANUAL_EXPIRY_TEXT}\n\n"
-        "<i>Silakan tekan/copy key di atas untuk mengambil key Anda.</i>"
+        f"• Status: {safe_status}\n"
+        f"• Expired: {safe_expiry}\n\n"
+        r"_Silakan tekan/copy key di atas untuk mengambil key Anda\._"
     )
     
 def create_keep_alive_app() -> Flask:
@@ -423,8 +428,8 @@ async def get_key_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     pesan_key = key_message(GET_KEY_URL, datetime.now())
     await query.message.reply_text(
         pesan_key,
-        parse_mode="HTML",
-        disable_web_page_preview=False,
+        parse_mode="MarkdownV2",
+        disable_web_page_preview=True,
     )
     
 async def list_harga(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
