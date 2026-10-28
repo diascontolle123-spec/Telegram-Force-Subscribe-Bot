@@ -46,7 +46,7 @@ MENU_TUTORIAL = "📖 Tutorial"
 APK_NINJA_URL = "https://sub4unlock.com/S/05mxk"
 APK_SAMURAI_URL = "https://sub4unlock.com/S/Q6ef1"
 APK_BOLT_URL = "https://sub4unlock.com/S/h6oj7"
-GET_KEY_URL = "NB-BOLT-LYJZGE-2BGZPM-SKKYSC"
+GET_KEY_URL = "NB-BOLT-F32CSW-NZRSPJ-CC3XM5"
 # Status Kunci Samurai (Default: Terkunci)
 SAMURAI_ACCESS_OPEN = False
 TUTORIAL_URL = "https://youtu.be/94COnGxw15A?si=gVm0Qjos7Cfk_3Ao"
