@@ -270,12 +270,12 @@ def format_expiry(expiry: datetime) -> str:
 
 def key_message(key_value: str, expiry: datetime) -> str:
     return (
-        "<b>🔑 KEY ANDA BERHASIL DIDAPATKAN!</b>\n\n"
-        f"• Key: <code>{GET_KEY_URL}</code>\n"
+        "🔑 KEY ANDA BERHASIL DIDAPATKAN!\n\n"
+        f"• Key: {GET_KEY_URL}\n"
         f"• Max Device: {MAX_DEVICE_TEXT}\n"
         f"• Status: {STATUS_TEXT}\n"
         f"• Expired: {MANUAL_EXPIRY_TEXT}\n\n"
-        "<i>Silakan tekan/copy key di atas untuk mengambil key Anda.</i>"
+        "Silakan tekan/copy key di atas untuk mengambil key Anda."
     )
     
 def create_keep_alive_app() -> Flask:
