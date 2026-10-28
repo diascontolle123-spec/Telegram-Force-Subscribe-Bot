@@ -402,20 +402,12 @@ async def send_key(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     message = update.effective_message
     if message is not None:
-        pesan_key = (
-            "🔗 <b>KEY ANDA BERHASIL DIDAPATKAN!</b>\n\n"
-            f"• <b>Key:</b> {GET_KEY_URL}\n"
-            f"• <b>Max Device:</b> {MAX_DEVICE_TEXT}\n"
-             f"• Status: {STATUS_TEXT}\n"
-            f"• <b>Expired:</b> {MANUAL_EXPIRY_TEXT}\n\n"
-            "<i>Silakan copy key di atas untuk mengambil key Anda.</i>"
-        )
+        pesan_key = key_message(GET_KEY_URL, datetime.now())
         await message.reply_text(
             pesan_key,
             parse_mode=ParseMode.HTML,
             disable_web_page_preview=False,
         )
-
 
 async def get_key(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await send_key(update, context)
