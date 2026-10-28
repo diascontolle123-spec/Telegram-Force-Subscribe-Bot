@@ -270,7 +270,7 @@ def format_expiry(expiry: datetime) -> str:
 
 def key_message(key_value: str, expiry: datetime) -> str:
     return (
-        f"🔗 <b>KEY ANDA BERHASIL DIDAPATKAN!</b>\n\n"
+        f"🔑 <b>KEY ANDA BERHASIL DIDAPATKAN!</b>\n\n"
         f"• Key: <code>{GET_KEY_URL}</code>\n"
         f"• Max Device: {MAX_DEVICE_TEXT}\n"
         f"• Status: {STATUS_TEXT}\n"
@@ -414,10 +414,13 @@ async def get_key(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def get_key_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
+    await query.answer()
+    
+    pesan_key = key_message(GET_KEY_URL, datetime.now())
     await query.message.reply_text(
-    pesan_key,
-    parse_mode=ParseMode.HTML,
-    disable_web_page_preview=False
+        pesan_key,
+        parse_mode=ParseMode.HTML,
+        disable_web_page_preview=False
     )
     
 async def list_harga(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
