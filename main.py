@@ -260,7 +260,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             InlineKeyboardButton("🥷 Link APK Ninja", callback_data="apk_ninja")
         ],
         [
-            # Tombol BOLT ENGGINE mengarah langsung ke link sub4unlock
             InlineKeyboardButton("⚡ BOLT ENGGINE", url="https://sub4unlock.com/S/h6oj7")
         ],
         [
@@ -270,6 +269,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             InlineKeyboardButton("📖 Tutorial", callback_data="tutorial")
         ]
     ]
+
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text("Silakan pilih menu:", reply_markup=reply_markup)
 
