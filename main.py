@@ -86,9 +86,15 @@ NINJA ENGGINE :
 • Permanent: Contacts Admin
 
 SAMURAI ENGGINE :
-• 7 Day: 45K - $6
-• 15 Day: 80K - $8.50
-• 30 Day: 115K - $11.50
+• 7 Day: 65K - $6
+• 15 Day: 100K - $9
+• 30 Day: 130K - $11.50
+• Permanent: Contacts Admin
+
+BOLT ENGGINE :
+• 7 Day: 65K - $6
+• 15 Day: 100K - $9
+• 30 Day: 130K - $11.50
 • Permanent: Contacts Admin
 
 💳 Pembayaran: BINANCE / PAYPAL / DANA / QRIS / MANDIRI
