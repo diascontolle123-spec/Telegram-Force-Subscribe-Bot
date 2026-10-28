@@ -270,12 +270,12 @@ def format_expiry(expiry: datetime) -> str:
 
 def key_message(key_value: str, expiry: datetime) -> str:
     return (
-        f"🔗 <b>KEY ANDA BERHASIL DIDAPATKAN!</b>\n\n"
-        f"• Key: <code>{GET_KEY_URL}</code>\n"
+        f"🔗 *KEY ANDA BERHASIL DIDAPATKAN!*\n\n"
+        f"• Key: `{GET_KEY_URL}`\n"
         f"• Max Device: {MAX_DEVICE_TEXT}\n"
         f"• Status: {STATUS_TEXT}\n"
         f"• Expired: {MANUAL_EXPIRY_TEXT}\n\n"
-        f"<i>Silakan tekan/copy key di atas untuk mengambil key Anda.</i>"
+        f"_Silakan tekan/copy key di atas untuk mengambil key Anda._"
     )
 
 def create_keep_alive_app() -> Flask:
@@ -412,22 +412,16 @@ async def send_key(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def get_key(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await send_key(update, context)
 
-
-async def order_vip(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    if not await is_subscribed(update, context):
-        await send_subscription_prompt(update)
-        return
-
-    settings: Settings = context.application.bot_data["settings"]
-    message = update.effective_message
-    if message is not None:
-        await message.reply_text(
-            "Daftar Harga VIP\n\n"
-            f"{settings.vip_price_list}\n\n"
-            f"Admin: {ADMIN_USERNAME}",
-            reply_markup=menu_keyboard(),
-        )
-
+async def get_key_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    query = update.callback_query
+    await query.answer()
+    
+    pesan_key = key_message(GET_KEY_URL, datetime.now())
+    await query.message.reply_text(
+        pesan_key,
+        parse_mode=ParseMode.HTML,
+        disable_web_page_preview=False
+    )
 
 async def list_harga(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not await is_subscribed(update, context):
@@ -440,7 +434,6 @@ async def list_harga(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
             LIST_HARGA_MESSAGE,
             reply_markup=menu_keyboard(),
         )
-
 
 async def apk_ninja(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not await is_subscribed(update, context):
