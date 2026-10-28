@@ -710,6 +710,7 @@ def build_application(settings: Settings) -> Application:
     application.bot_data["settings"] = settings
     application.bot_data["user_store"] = UserStore(USERS_DB_PATH)
 
+    # Command Handlers
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("getkey", get_key))
     application.add_handler(CommandHandler("listprice", list_harga))
@@ -722,6 +723,13 @@ def build_application(settings: Settings) -> Application:
     application.add_handler(CommandHandler("help", help_command))
     application.add_handler(CommandHandler("stats", stats))
 
+    # Callback Handlers (Untuk merespons klik tombol inline/mengambang)
+    application.add_handler(
+        CallbackQueryHandler(list_harga, pattern="^list_price$")
+    )
+    application.add_handler(
+        CallbackQueryHandler(order_vip, pattern="^order_vip$")
+    )
     application.add_handler(
         CallbackQueryHandler(
             check_status_callback,
@@ -735,7 +743,7 @@ def build_application(settings: Settings) -> Application:
         )
     )
 
-        # Handler untuk merespons klik tombol menu teks
+    # Handler untuk merespons klik tombol menu teks
     application.add_handler(
         MessageHandler(filters.TEXT & ~filters.COMMAND, plain_text)
     )
