@@ -249,32 +249,6 @@ def get_key_keyboard() -> InlineKeyboardMarkup:
     )
 
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    keyboard = [
-        [
-            InlineKeyboardButton("🔑 Get Key", callback_data="get_key"),
-            InlineKeyboardButton("📊 List Price", callback_data="list_price")
-        ],
-        [
-            InlineKeyboardButton("⚔️ Link APK Samurai", callback_data="apk_samurai"),
-            InlineKeyboardButton("🥷 Link APK Ninja", callback_data="apk_ninja")
-        ],
-        [
-            InlineKeyboardButton("⚡ BOLT ENGGINE", url="https://sub4unlock.com/S/h6oj7")
-        ],
-        [
-            InlineKeyboardButton("🛒 Order VIP", callback_data="order_vip")
-        ],
-        [
-            InlineKeyboardButton("📖 Tutorial", callback_data="tutorial")
-        ]
-    ]
-
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text("Silakan pilih menu:", reply_markup=reply_markup)
-
-
-
 def subscription_message() -> str:
     return (
         "AKSES TERKUNCI\n\n"
@@ -292,7 +266,7 @@ def key_message(key_value: str, expiry: datetime) -> str:
     return (
             f"🔗 KEY ANDA BERHASIL DIDAPATKAN!\n\n"
             f"• Key: {GET_KEY_URL}\n"
-            f"• Max Device: {MAX_DEVICE_TEXT}\n"
+            f"• Max Device: {MAX_DEVICE_TEXT}\n
             f"• Status: EXPIRED\n"
             f"• Expired: {MANUAL_EXPIRY_TEXT}\n\n"
             f"Silakan copy key di atas untuk mengambil key Anda."
@@ -353,7 +327,27 @@ async def is_subscribed(
     return member.status in {"member", "administrator", "creator"} or (
         member.status == "restricted" and bool(member.is_member)
     )
-
+def menu_keyboard() -> InlineKeyboardMarkup:
+    keyboard = [
+        [
+            InlineKeyboardButton(MENU_GET_KEY, callback_data=GET_KEY_CALLBACK),
+            InlineKeyboardButton(MENU_LIST_HARGA, callback_data="list_price")
+        ],
+        [
+            InlineKeyboardButton(MENU_APK_SAMURAI, url=APK_SAMURAI_URL),
+            InlineKeyboardButton(MENU_APK_NINJA, url=APK_NINJA_URL)
+        ],
+        [
+            InlineKeyboardButton(MENU_APK_BOLT, url=APK_BOLT_URL)
+        ],
+        [
+            InlineKeyboardButton(MENU_ORDER_VIP, callback_data="order_vip")
+        ],
+        [
+            InlineKeyboardButton(MENU_TUTORIAL, url=TUTORIAL_URL)
+        ]
+    ]
+    return InlineKeyboardMarkup(keyboard)
 
 async def send_subscription_prompt(update: Update) -> None:
     message = update.effective_message
