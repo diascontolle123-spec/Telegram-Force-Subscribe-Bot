@@ -683,6 +683,23 @@ async def post_init(application: Application) -> None:
 
     LOGGER.info("Telegram bot started; protected channel: %s", CHANNEL_USERNAME)
 
+async def order_vip(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not await is_subscribed(update, context):
+        await send_subscription_prompt(update)
+        return
+
+    settings: Settings = context.application.bot_data["settings"]
+    message = update.effective_message
+    if message is not None:
+        pesan_order = (
+            "Daftar Harga VIP\n\n"
+            f"{settings.vip_price_list}\n\n"
+            f"Admin: {ADMIN_USERNAME}"
+        )
+        await message.reply_text(
+            pesan_order,
+            reply_markup=menu_keyboard()
+        )
 
 async def error_handler(
     update: object, context: ContextTypes.DEFAULT_TYPE
