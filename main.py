@@ -39,11 +39,13 @@ GET_KEY_CALLBACK = "get_key"
 MENU_GET_KEY = "🔑 Get Key"
 MENU_LIST_HARGA = "📊 List Price"
 MENU_ORDER_VIP = "🛒 Order VIP"
-MENU_APK_NINJA = "📥 Link APK Ninja"
+MENU_APK_NINJA = "🥷 Link APK Ninja"
 MENU_APK_SAMURAI = "⚔️ Link APK Samurai"
+MENU_APK_BOLT = "⚡ BOLT ENGGINE"
 MENU_TUTORIAL = "📖 Tutorial"
 APK_NINJA_URL = "https://sub4unlock.com/S/05mxk"
-APK_SAMURAI_URL = "https://sub4unlock.com/S/Q6efl"
+APK_SAMURAI_URL = "https://sub4unlock.com/S/Q6ef1"
+APK_BOLT_URL = "https://sub4unlock.com/S/h6oj7"
 GET_KEY_URL = "SAMURAI-A102F21C"
 STATUS_TEXT = "-"
 # Status Kunci Samurai (Default: Terkunci)
@@ -247,26 +249,29 @@ def get_key_keyboard() -> InlineKeyboardMarkup:
     )
 
 
-def menu_keyboard() -> ReplyKeyboardMarkup:
-    return ReplyKeyboardMarkup(
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    keyboard = [
         [
-            [
-                KeyboardButton("🔑 Get Key"),
-                KeyboardButton("📊 List Price"),
-            ],
-            [
-                KeyboardButton("⚔️ Link APK Samurai"),
-                KeyboardButton("🥷 Link APK Ninja"),
-            ],
-            [
-                KeyboardButton("🛒 Order VIP"),
-            ],
-            [
-                KeyboardButton("📖 Tutorial"),
-            ],
+            InlineKeyboardButton("🔑 Get Key", callback_data="get_key"),
+            InlineKeyboardButton("📊 List Price", callback_data="list_price")
         ],
-        resize_keyboard=True,
-    )
+        [
+            InlineKeyboardButton("⚔️ Link APK Samurai", callback_data="apk_samurai"),
+            InlineKeyboardButton("🥷 Link APK Ninja", callback_data="apk_ninja")
+        ],
+        [
+            # Tombol BOLT ENGGINE mengarah langsung ke link sub4unlock
+            InlineKeyboardButton("⚡ BOLT ENGGINE", url="https://sub4unlock.com/S/h6oj7")
+        ],
+        [
+            InlineKeyboardButton("🛒 Order VIP", callback_data="order_vip")
+        ],
+        [
+            InlineKeyboardButton("📖 Tutorial", callback_data="tutorial")
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    await update.message.reply_text("Silakan pilih menu:", reply_markup=reply_markup)
 
 
 
