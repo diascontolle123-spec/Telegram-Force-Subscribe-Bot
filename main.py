@@ -266,7 +266,7 @@ def key_message(key_value: str, expiry: datetime) -> str:
     return (
             f"🔗 KEY ANDA BERHASIL DIDAPATKAN!\n\n"
             f"• Key: {GET_KEY_URL}\n"
-            f"• Max Device: {MAX_DEVICE_TEXT}\n
+            f"• Max Device: {MAX_DEVICE_TEXT}\n"
             f"• Status: EXPIRED\n"
             f"• Expired: {MANUAL_EXPIRY_TEXT}\n\n"
             f"Silakan copy key di atas untuk mengambil key Anda."
