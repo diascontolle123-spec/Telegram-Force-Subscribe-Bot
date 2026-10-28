@@ -405,7 +405,7 @@ async def send_key(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         pesan_key = key_message(GET_KEY_URL, datetime.now())
         await message.reply_text(
             pesan_key,
-            parse_mode=ParseMode.HTML,
+            parse_mode="HTML",
             disable_web_page_preview=False,
         )
 
@@ -415,12 +415,16 @@ async def get_key(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def get_key_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
     await query.answer()
-    
+
+    if not await is_subscribed(update, context):
+        await send_subscription_prompt(update)
+        return
+
     pesan_key = key_message(GET_KEY_URL, datetime.now())
     await query.message.reply_text(
         pesan_key,
-        parse_mode=ParseMode.HTML,
-        disable_web_page_preview=False
+        parse_mode="HTML",
+        disable_web_page_preview=False,
     )
     
 async def list_harga(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
