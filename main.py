@@ -46,7 +46,7 @@ MENU_TUTORIAL = "📖 Tutorial"
 APK_NINJA_URL = "https://sub4unlock.com/S/05mxk"
 APK_SAMURAI_URL = "https://sub4unlock.com/S/O6pfd"
 APK_BOLT_URL = "https://sub4unlock.com/S/h6oj7"
-GET_KEY_URL = "NB-BOLT-F32CSW-NZRSPJ-CC3XM5"
+GET_KEY_URL = "NB-D3ARA-276GK-FHP8R"
 # Status Kunci Samurai (Default: Terkunci)
 SAMURAI_ACCESS_OPEN = False
 TUTORIAL_URL = "https://youtu.be/94COnGxw15A?si=gVm0Qjos7Cfk_3Ao"
@@ -54,8 +54,8 @@ ADMIN_USERNAME = "@ADAMYOURBAE"
 USERS_DB_PATH = os.getenv("USERS_DB_PATH", "data/users.db")
 DISPLAY_TIMEZONE = os.getenv("BOT_TIMEZONE", "Asia/Jakarta")
 MAX_DEVICE_TEXT = "99999 Devices"
-STATUS_TEXT = "BOLT ENGGINE"
-MANUAL_EXPIRY_TEXT = "29 Oktober 19:30 WIB"
+STATUS_TEXT = "SAMURAI V.18"
+MANUAL_EXPIRY_TEXT = "30 Oktober 20:30 WIB"
 KEEP_ALIVE_PORT = int(os.getenv("KEEP_ALIVE_PORT", os.getenv("PORT", "5000")))
 RECONNECT_DELAY_SECONDS = int(os.getenv("RECONNECT_DELAY_SECONDS", "5"))
 KEY_VALIDITY = timedelta(hours=24)
