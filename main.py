@@ -44,7 +44,7 @@ MENU_APK_SAMURAI = "⚔️ Link APK Samurai"
 MENU_APK_BOLT = "⚡ BOLT ENGGINE"
 MENU_TUTORIAL = "📖 Tutorial"
 APK_NINJA_URL = "https://sub4unlock.com/S/05mxk"
-APK_SAMURAI_URL = "https://sub4unlock.com/S/Q6ef1"
+APK_SAMURAI_URL = "https://sub4unlock.com/S/O6pfd"
 APK_BOLT_URL = "https://sub4unlock.com/S/h6oj7"
 GET_KEY_URL = "NB-BOLT-F32CSW-NZRSPJ-CC3XM5"
 # Status Kunci Samurai (Default: Terkunci)
